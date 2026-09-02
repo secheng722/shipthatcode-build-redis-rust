@@ -17,7 +17,9 @@ fn parse_args(line: &str) -> Vec<String> {
             _ => current.push(ch),
         }
     }
-    if !current.is_empty() { args.push(current); }
+    if !current.is_empty() {
+        args.push(current);
+    }
     args
 }
 
@@ -30,9 +32,10 @@ fn handle_command(args: &[String]) -> String {
 
     match cmd.as_str() {
         "PING" => {
-            // TODO: Return "+PONG\r\n" for no args
-            // TODO: Return bulk string for PING <message>
-            String::new()
+            if let Some(message) = args.get(1) {
+                return encode_bulk_string(message);
+            }
+            "+PONG\r\n".to_string()
         }
         _ => format!("-ERR unknown command\r\n"),
     }
@@ -46,7 +49,9 @@ fn main() {
     for line in stdin.lock().lines() {
         let line = line.unwrap();
         let line = line.trim().to_string();
-        if line.is_empty() { continue; }
+        if line.is_empty() {
+            continue;
+        }
         let args = parse_args(&line);
         let response = handle_command(&args);
         write!(out, "{}", response).unwrap();
