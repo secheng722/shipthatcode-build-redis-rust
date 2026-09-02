@@ -32,10 +32,11 @@ fn handle_command(args: &[String]) -> String {
 
     match cmd.as_str() {
         "PING" => {
-            if let Some(message) = args.get(1) {
-                return encode_bulk_string(message);
+            if let Some(msg) = args.get(1) {
+                encode_bulk_string(msg)
+            } else {
+                "+PONG\r\n".to_string()
             }
-            "+PONG\r\n".to_string()
         }
         _ => format!("-ERR unknown command\r\n"),
     }
