@@ -38,6 +38,13 @@ fn handle_command(args: &[String]) -> String {
                 "+PONG\r\n".to_string()
             }
         }
+        "ECHO" => {
+            if let Some(msg) = args.get(1) {
+                encode_bulk_string(msg)
+            } else {
+                "-ERR wrong number of arguments for 'ECHO'\r\n".to_string()
+            }
+        }
         _ => format!("-ERR unknown command\r\n"),
     }
 }
