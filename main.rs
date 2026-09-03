@@ -27,20 +27,32 @@ fn encode_bulk_string(s: &str) -> String {
     format!("${}\r\n{}\r\n", s.len(), s)
 }
 
+fn eb(s: Option<&str>) -> String {
+    if let Some(s) = s {
+        format!("${}\r\n{}\r\n", s.len(), s)
+    } else {
+        "$-1\r\n".into()
+    }
+}
+
+fn es(s: &str) -> String {
+    format!("+{}\r\n", s)
+}
+
 fn handle_command(args: &[String]) -> String {
     let cmd = args[0].to_uppercase();
 
     match cmd.as_str() {
         "PING" => {
             if let Some(msg) = args.get(1) {
-                encode_bulk_string(msg)
+                eb(Some(msg))
             } else {
-                "+PONG\r\n".to_string()
+                es("PONG")
             }
         }
         "ECHO" => {
             if let Some(msg) = args.get(1) {
-                encode_bulk_string(msg)
+                eb(Some(msg))
             } else {
                 "-ERR wrong number of arguments for 'ECHO'\r\n".to_string()
             }
