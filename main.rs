@@ -23,10 +23,6 @@ fn parse_args(line: &str) -> Vec<String> {
     args
 }
 
-fn encode_bulk_string(s: &str) -> String {
-    format!("${}\r\n{}\r\n", s.len(), s)
-}
-
 fn eb(s: Option<&str>) -> String {
     if let Some(s) = s {
         format!("${}\r\n{}\r\n", s.len(), s)
@@ -37,6 +33,14 @@ fn eb(s: Option<&str>) -> String {
 
 fn es(s: &str) -> String {
     format!("+{}\r\n", s)
+}
+
+fn ee(msg: &str) -> String {
+    format!("-{}\r\n", msg)
+}
+
+fn ei(n: i64) -> String {
+    format!(":{}\r\n", n)
 }
 
 fn handle_command(args: &[String]) -> String {
@@ -57,7 +61,9 @@ fn handle_command(args: &[String]) -> String {
                 "-ERR wrong number of arguments for 'ECHO'\r\n".to_string()
             }
         }
-        _ => format!("-ERR unknown command\r\n"),
+        "COMMAND" => es("OK"),
+        // _ => format!("-ERR unknown command\r\n"),
+        _ => ee(&format!("ERR unknown command '{}'", cmd)),
     }
 }
 
